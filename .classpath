@@ -6,11 +6,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
 		<attributes>
 			<attribute name="optional" value="true"/>
@@ -22,7 +17,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/harry12800.tools"/>
 	<classpathentry kind="lib" path="lib/barbecue-1.5-beta1.jar"/>
 	<classpathentry kind="lib" path="lib/java-unrar-0.3.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.24-bin.jar"/>

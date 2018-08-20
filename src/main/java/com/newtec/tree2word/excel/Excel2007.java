@@ -9,6 +9,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +22,8 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import cn.harry12800.tools.FileUtils;
- 
 
-public class Excel2007 implements IExcelOperate{
+public class Excel2007 implements IExcelOperate {
 
 	@Override
 	public String[] readExcelTitle(String path) {
@@ -54,7 +54,7 @@ public class Excel2007 implements IExcelOperate{
 		}
 		return null;
 	}
-	 
+
 	@Override
 	public Map<Integer, List<String>> readExcelContent(String path) {
 		Map<Integer, List<String>> values = new LinkedHashMap<Integer, List<String>>();
@@ -71,7 +71,7 @@ public class Excel2007 implements IExcelOperate{
 				if (xRow == null) {
 					continue;
 				}
-				List<String> title = new ArrayList<String>(0) ;
+				List<String> title = new ArrayList<String>(0);
 				// 循环列Cell
 				for (int cellNum = 0; cellNum <= xRow.getLastCellNum(); cellNum++) {
 					XSSFCell xCell = xRow.getCell(cellNum);
@@ -89,13 +89,14 @@ public class Excel2007 implements IExcelOperate{
 		}
 		return null;
 	}
+
 	/**
 	 * 根据HSSFCell类型设置数据
 	 * 
 	 * @param cell
 	 * @return
 	 */
-	private String getCellFormatValue(XSSFCell   cell) {
+	private String getCellFormatValue(XSSFCell cell) {
 		String cellvalue = "";
 		if (cell != null) {
 			// 判断当前Cell的Type
@@ -145,9 +146,10 @@ public class Excel2007 implements IExcelOperate{
 		return cellvalue;
 
 	}
+
 	@SuppressWarnings("unused")
 	private String getValue(XSSFCell xCell) {
-		 
+
 		if (xCell.getCellType() == XSSFCell.CELL_TYPE_BOOLEAN) {
 			return String.valueOf(xCell.getBooleanCellValue());
 		} else if (xCell.getCellType() == XSSFCell.CELL_TYPE_NUMERIC) {
@@ -157,8 +159,7 @@ public class Excel2007 implements IExcelOperate{
 
 			return String.valueOf(xCell.getStringCellValue());
 		}
-		
- 
+
 	}
 
 	@Override
@@ -168,39 +169,38 @@ public class Excel2007 implements IExcelOperate{
 		XSSFWorkbook xwb = new XSSFWorkbook(in);
 		XSSFSheet xSheet = xwb.getSheetAt(0);
 		XSSFRow cellRow = xSheet.getRow(row);
-		if(cellRow ==null){
+		if (cellRow == null) {
 			cellRow = xSheet.createRow(row);
 		}
 		XSSFCell cell = cellRow.getCell(changeIndex);
-		if(cell == null) {
+		if (cell == null) {
 			cell = cellRow.createCell(changeIndex);
 		}
 		File file = new File(path);
-		String temp = file.getParentFile().getAbsoluteFile()+"\\tmp.xlsx";
+		String temp = file.getParentFile().getAbsoluteFile() + "\\tmp.xlsx";
 		System.out.println(temp);
 		cell.setCellValue(content);
 		in.close();
 		FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(temp);
-            xwb.write(out);
-            FileUtils.deleteFile(path);
-             file = new File(temp);
-             file.renameTo(new File(path));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            try {
-            	if(out!=null)
-            		out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+		try {
+			out = new FileOutputStream(temp);
+			xwb.write(out);
+			FileUtils.deleteFile(path);
+			file = new File(temp);
+			file.renameTo(new File(path));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			try {
+				if (out != null)
+					out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return true;
 	}
- 
 
 	@Override
 	public boolean deleteRow(String path, int row) {
@@ -208,38 +208,38 @@ public class Excel2007 implements IExcelOperate{
 	}
 
 	@Override
-	public boolean writeCells(String path, Set<ExcelPosition> set) throws  Exception {
+	public boolean writeCells(String path, Set<ExcelPosition> set) throws Exception {
 		InputStream in = new FileInputStream(path);
 		XSSFWorkbook xwb = new XSSFWorkbook(in);
 		XSSFSheet xSheet = xwb.getSheetAt(0);
-		for(ExcelPosition ep : set){
+		for (ExcelPosition ep : set) {
 			XSSFRow cellRow = xSheet.getRow(ep.getRow());
-			if(cellRow ==null){
+			if (cellRow == null) {
 				cellRow = xSheet.createRow(ep.getRow());
 			}
 			XSSFCell cell = cellRow.getCell(ep.getCol());
-			if(cell == null) {
+			if (cell == null) {
 				cell = cellRow.createCell(ep.getCol());
 			}
 			cell.setCellValue(ep.getContent());
 		}
-		
+
 		FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(path);
-            xwb.write(out);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            try {
-            	if(out!=null)
+		try {
+			out = new FileOutputStream(path);
+			xwb.write(out);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			try {
+				if (out != null)
 					out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return true;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -248,40 +248,46 @@ public class Excel2007 implements IExcelOperate{
 		InputStream in = new FileInputStream(srcpath);
 		XSSFWorkbook xwb = new XSSFWorkbook(in);
 		XSSFSheet xSheet = xwb.getSheetAt(0);
-		for(ExcelPosition ep : set){
+		for (ExcelPosition ep : set) {
 			XSSFRow cellRow = xSheet.getRow(ep.getRow());
-			if(cellRow ==null){
+			if (cellRow == null) {
 				cellRow = xSheet.createRow(ep.getRow());
 			}
 			XSSFCell cell = cellRow.getCell(ep.getCol());
-			if(cell == null) {
+			if (cell == null) {
 				cell = cellRow.createCell(ep.getCol());
 			}
 			cell.setCellValue(ep.getContent());
 		}
-		
+
 		FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(desPath);
-            xwb.write(out);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            try {
-            	if(out!=null)
+		try {
+			out = new FileOutputStream(desPath);
+			xwb.write(out);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			try {
+				if (out != null)
 					out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return true;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return true;
 	}
 
 	@Override
 	public String toHtml(String path) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public static void main(String[] args) throws Exception {
+		Excel2007 e2007 = new Excel2007();
+		Set<ExcelPosition> set = new HashSet<>(0);
+		e2007.writeCells("d:/a.xlsx", set );
 	}
 
 }
